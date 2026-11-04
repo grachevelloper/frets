@@ -1,4 +1,4 @@
-package main
+package files
 
 import (
 	"bytes"
@@ -13,15 +13,10 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
 	"github.com/grachevelloper/frets/services/internal/platform"
+	"github.com/grachevelloper/frets/services/song-library/internal/library"
 )
 
-type storage interface {
-	put(context.Context, string, []byte) error
-	open(context.Context, string) (io.ReadCloser, error)
-	remove(context.Context, string) error
-}
-
-func newStorage() storage {
+func FromEnvironment() library.Files {
 	endpoint := os.Getenv("S3_ENDPOINT")
 	if endpoint == "" {
 		dir := platform.Required("FILE_DIR")
@@ -43,7 +38,7 @@ func newStorage() storage {
 
 type diskStorage string
 
-func (d diskStorage) put(ctx context.Context, key string, data []byte) error {
+func (d diskStorage) Put(ctx context.Context, key string, data []byte) error {
 	file, err := os.OpenFile(filepath.Join(string(d), key+".part"), os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
 		return err
@@ -71,11 +66,11 @@ func (d diskStorage) put(ctx context.Context, key string, data []byte) error {
 	return d.syncDirectory()
 }
 
-func (d diskStorage) open(_ context.Context, key string) (io.ReadCloser, error) {
+func (d diskStorage) Open(_ context.Context, key string) (io.ReadCloser, error) {
 	return os.Open(filepath.Join(string(d), key))
 }
 
-func (d diskStorage) remove(_ context.Context, key string) error {
+func (d diskStorage) Remove(_ context.Context, key string) error {
 	for _, name := range []string{key, key + ".part"} {
 		if err := os.Remove(filepath.Join(string(d), name)); err != nil && !os.IsNotExist(err) {
 			return err
@@ -98,14 +93,14 @@ type objectStorage struct {
 	bucket string
 }
 
-func (s objectStorage) put(ctx context.Context, key string, data []byte) error {
+func (s objectStorage) Put(ctx context.Context, key string, data []byte) error {
 	_, err := s.client.PutObject(ctx, s.bucket, key, bytes.NewReader(data), int64(len(data)), minio.PutObjectOptions{
 		ContentType: "application/octet-stream", DisableMultipart: true,
 	})
 	return err
 }
 
-func (s objectStorage) open(ctx context.Context, key string) (io.ReadCloser, error) {
+func (s objectStorage) Open(ctx context.Context, key string) (io.ReadCloser, error) {
 	object, err := s.client.GetObject(ctx, s.bucket, key, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
@@ -117,7 +112,7 @@ func (s objectStorage) open(ctx context.Context, key string) (io.ReadCloser, err
 	return object, nil
 }
 
-func (s objectStorage) remove(ctx context.Context, key string) error {
+func (s objectStorage) Remove(ctx context.Context, key string) error {
 	err := s.client.RemoveObject(ctx, s.bucket, key, minio.RemoveObjectOptions{})
 	if err != nil && strings.EqualFold(minio.ToErrorResponse(err).Code, "NoSuchKey") {
 		return nil

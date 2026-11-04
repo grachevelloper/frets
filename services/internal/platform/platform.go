@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,6 +16,8 @@ import (
 )
 
 const SessionCookie = "frets_session"
+
+var ErrUnauthorized = errors.New("unauthorized")
 
 func Required(name string) string {
 	value := os.Getenv(name)
