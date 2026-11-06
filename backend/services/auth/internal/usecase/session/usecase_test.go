@@ -13,6 +13,7 @@ import (
 type sessionRepository struct {
 	key     []byte
 	expires time.Time
+	email   string
 }
 
 func (r *sessionRepository) CreateSession(_ context.Context, provider string, identity auth.Identity, key []byte, expires time.Time) error {
@@ -25,7 +26,7 @@ func (r *sessionRepository) Profile(_ context.Context, key []byte) (auth.Profile
 	if !bytes.Equal(key, r.key) {
 		return auth.Profile{}, auth.ErrUnauthorized
 	}
-	return auth.Profile{ID: "user"}, nil
+	return auth.Profile{ID: "user", Email: r.email}, nil
 }
 
 func (r *sessionRepository) Revoke(_ context.Context, key []byte) error {
@@ -41,9 +42,9 @@ type tokenGenerator struct{}
 func (tokenGenerator) Generate() string { return "raw-session-secret" }
 
 func TestSessionUsesHashedTokensAndRevocation(t *testing.T) {
-	repo := &sessionRepository{}
+	repo := &sessionRepository{email: "member@example.test"}
 	u := New(repo, tokenGenerator{})
-	key, err := u.Create(t.Context(), "yandex", auth.Identity{ID: "account"})
+	key, err := u.Create(t.Context(), "yandex", auth.Identity{ID: "account", Email: "member@example.test"})
 	if err != nil || !bytes.Equal(repo.key, auth.HashSecret(key)) || bytes.Equal(repo.key, []byte(key)) {
 		t.Fatalf("persisted token: key=%q error=%v", key, err)
 	}
@@ -68,5 +69,27 @@ func TestEmptyTokenRejectedWithoutRepository(t *testing.T) {
 	}
 	if err := u.Revoke(t.Context(), ""); !errors.Is(err, auth.ErrUnauthorized) {
 		t.Fatal(err)
+	}
+}
+
+func TestSessionRejectsMissingEmail(t *testing.T) {
+	u := New(nil, nil)
+
+	_, err := u.Create(t.Context(), "google", auth.Identity{ID: "account"})
+
+	if !errors.Is(err, auth.ErrLoginFailed) {
+		t.Fatalf("missing email: %v", err)
+	}
+}
+
+func TestLegacyProfileWithoutEmailRequiresLogin(t *testing.T) {
+	key := "legacy-session"
+	repo := &sessionRepository{key: auth.HashSecret(key)}
+	u := New(repo, tokenGenerator{})
+
+	_, err := u.Profile(t.Context(), key)
+
+	if !errors.Is(err, auth.ErrUnauthorized) {
+		t.Fatalf("legacy profile: %v", err)
 	}
 }

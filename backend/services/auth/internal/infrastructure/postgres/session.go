@@ -13,7 +13,7 @@ import (
 func (r *Repository) Profile(ctx context.Context, tokenHash []byte) (auth.Profile, error) {
 	var p auth.Profile
 	err := r.db.QueryRow(ctx, `
-		SELECT u.id, u.nickname, u.email, u.created_at
+		SELECT u.id, u.nickname, COALESCE(u.email, ''), u.created_at
 		FROM auth.sessions s JOIN auth.users u ON u.id = s.user_id
 		WHERE s.token_hash=$1 AND s.revoked_at IS NULL AND s.expires_at > now()
 	`, tokenHash).Scan(&p.ID, &p.Nickname, &p.Email, &p.CreatedAt)
@@ -58,6 +58,10 @@ func (r *Repository) CreateSession(ctx context.Context, provider string, identit
 		}
 	}
 	if err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec(ctx, "UPDATE auth.users SET email=$1 WHERE id=$2", identity.Email, userID); err != nil {
 		return err
 	}
 

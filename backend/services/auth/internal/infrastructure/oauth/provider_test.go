@@ -38,8 +38,11 @@ func TestProviderIdentity(t *testing.T) {
 		data   string
 		wantID string
 	}{
-		{"google", "Bearer test-token", `{"sub":"google-id","id":"ignored","name":"G"}`, "google-id"},
-		{"yandex", "OAuth test-token", `{"id":"yandex-id","client_id":"app","display_name":"Y"}`, "yandex-id"},
+		{"google", "Bearer test-token", `{"sub":"google-id","id":"ignored","name":"G","email":"g@example.test"}`, "google-id"},
+		{"yandex", "OAuth test-token", `{"id":"yandex-id","client_id":"app","display_name":"Y","default_email":"y@example.test"}`, "yandex-id"},
+		{"google", "Bearer test-token", `{"sub":"google-id","name":"G"}`, ""},
+		{"google", "Bearer test-token", `{"sub":"google-id","email":"invalid"}`, ""},
+		{"yandex", "OAuth test-token", `{"id":"yandex-id","client_id":"app"}`, ""},
 		{"yandex", "OAuth test-token", `{"id":"foreign-id","client_id":"another-app"}`, ""},
 	}
 
