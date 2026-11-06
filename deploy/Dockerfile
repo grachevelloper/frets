@@ -1,12 +1,13 @@
-FROM golang:1.25-alpine AS build
+FROM golang:1.27.3-alpine AS build
 WORKDIR /src
 
-COPY go.mod go.sum ./
-RUN go mod download
-COPY services ./services
+COPY backend/go.mod backend/go.sum ./
+COPY backend/vendor ./vendor
+COPY backend/lib ./lib
+COPY backend/services ./services
 
 ARG SERVICE
-RUN CGO_ENABLED=0 go build -trimpath -o /frets "./services/${SERVICE}"
+RUN --network=none CGO_ENABLED=0 go build -mod=vendor -trimpath -o /frets "./services/${SERVICE}/cmd/${SERVICE}"
 
 FROM alpine:3.23
 RUN apk add --no-cache ca-certificates \

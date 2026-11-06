@@ -9,12 +9,13 @@ import uuid
 from http.cookiejar import CookieJar
 
 ORIGIN = os.environ.get("FRETS_ORIGIN", "http://localhost:6666")
+PUBLIC_ORIGIN = os.environ.get("FRETS_PUBLIC_ORIGIN", ORIGIN)
 API = f"{ORIGIN}/api/v1"
 
 
 def request(client, method, path, status, body=None, headers=None):
     req = urllib.request.Request(
-        API + path, data=body, headers={"Origin": ORIGIN, **(headers or {})},
+        API + path, data=body, headers={"Origin": PUBLIC_ORIGIN, **(headers or {})},
         method=method,
     )
     try:
