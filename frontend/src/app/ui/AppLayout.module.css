@@ -1,0 +1,47 @@
+.shell {
+    box-sizing: border-box;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1840px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+.header {
+    min-height: 96px;
+}
+
+.brand {
+    color: inherit;
+    text-decoration: none;
+}
+
+.tagline {
+    display: none;
+}
+
+.main {
+    display: flex;
+    flex: 1;
+    align-items: stretch;
+    justify-content: center;
+    min-width: 0;
+    padding-bottom: var(--g-spacing-6);
+}
+
+@media (max-width: 979px) {
+    .shell {
+        padding: 0 var(--g-spacing-4);
+    }
+
+    .header {
+        min-height: 80px;
+    }
+
+    .main {
+        align-items: flex-start;
+        padding-bottom: var(--g-spacing-4);
+    }
+}

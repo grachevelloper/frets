@@ -1,20 +1,30 @@
-import {Alert, Button} from '@gravity-ui/uikit';
+import {Alert, Button, Flex} from '@gravity-ui/uikit';
+
+import {i18n} from '../../../shared/i18n';
 import {useLogout} from '../model/useSession';
-import styles from './Session.module.css';
 
 export function SignOutButton() {
-  const logout = useLogout();
+    const logout = useLogout();
 
-  return (
-    <div className={styles.buttons}>
-      {logout.isError && (
-        <div role="alert">
-          <Alert theme="danger" title="Не удалось выйти" message="Попробуйте ещё раз." />
-        </div>
-      )}
-      <Button view="outlined" size="l" loading={logout.isPending} onClick={() => logout.mutate()}>
-        Выйти
-      </Button>
-    </div>
-  );
+    return (
+        <Flex direction='column' gap='spacing-3'>
+            {logout.isError && (
+                <div role='alert'>
+                    <Alert
+                        theme='danger'
+                        title={i18n('logout-error')}
+                        message={i18n('retry-short')}
+                    />
+                </div>
+            )}
+            <Button
+                view='outlined'
+                size='l'
+                loading={logout.isPending}
+                onClick={() => logout.mutate()}
+            >
+                {i18n('logout')}
+            </Button>
+        </Flex>
+    );
 }

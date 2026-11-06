@@ -1,16 +1,47 @@
-import {Button} from '@gravity-ui/uikit';
-import {getLoginHref} from '../api/session';
-import styles from './Session.module.css';
+import {Flex} from '@gravity-ui/uikit';
+
+import {i18n} from '../../../shared/i18n';
+import googleButton from '../assets/google-sign-in.svg';
+import yandexButton from '../assets/yandex-sign-in.svg';
+import {getLoginHref} from '../lib/getLoginHref';
+
+import styles from './SignInButtons.module.css';
 
 export function SignInButtons({returnTo}: {returnTo: string}) {
-  return (
-    <div className={styles.buttons}>
-      <Button href={getLoginHref('yandex', returnTo)} view="action" size="xl" width="max">
-        Войти с Яндекс ID
-      </Button>
-      <Button href={getLoginHref('google', returnTo)} view="outlined" size="xl" width="max">
-        Войти с Google
-      </Button>
-    </div>
-  );
+    return (
+        <Flex
+            direction='column'
+            gap='spacing-3'
+            alignItems='center'
+            role='group'
+            aria-label={i18n('sign-in-with')}
+        >
+            <a
+                href={getLoginHref('yandex', returnTo)}
+                aria-label={i18n('yandex')}
+                className={styles.link}
+            >
+                <img
+                    src={yandexButton}
+                    alt=''
+                    width='260'
+                    height='56'
+                    className={styles.artwork}
+                />
+            </a>
+            <a
+                href={getLoginHref('google', returnTo)}
+                aria-label={i18n('google')}
+                className={styles.link}
+            >
+                <img
+                    src={googleButton}
+                    alt=''
+                    width='180'
+                    height='40'
+                    className={styles.artwork}
+                />
+            </a>
+        </Flex>
+    );
 }

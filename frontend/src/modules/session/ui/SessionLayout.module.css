@@ -1,0 +1,115 @@
+.layout {
+    box-sizing: border-box;
+    display: grid;
+    flex: 1;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    width: 100%;
+    min-height: calc(100dvh - 186px);
+    overflow: hidden;
+    border: 1px solid var(--g-color-line-generic);
+    border-radius: var(--g-border-radius-xl);
+    background: var(--g-color-base-background);
+}
+
+.hero {
+    position: relative;
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 64px),
+        calc(100% - 64px) 100%,
+        0 100%
+    );
+    overflow: hidden;
+    min-width: 0;
+    padding: clamp(48px, 4vw, 88px);
+    background: var(--g-color-text-primary);
+    color: var(--g-color-base-background);
+}
+
+.title {
+    --g-text-display-4-font-size: clamp(48px, 4.2vw, 80px);
+    --g-text-display-4-line-height: 1.06;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    letter-spacing: -0.04em;
+}
+
+.description {
+    position: relative;
+    z-index: 1;
+    max-width: 440px;
+    margin: 0;
+    font-size: clamp(18px, 1.3vw, 22px);
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.strings {
+    position: absolute;
+    right: -80px;
+    bottom: 100px;
+    left: -80px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transform: rotate(-14deg);
+    opacity: 0.18;
+}
+
+.strings i {
+    display: block;
+    height: 1px;
+    background: currentColor;
+}
+
+.entry {
+    min-width: 0;
+    padding: clamp(40px, 4vw, 80px);
+}
+
+.content {
+    width: 100%;
+    max-width: 400px;
+}
+
+@media (max-width: 979px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+    }
+
+    .hero {
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            100% calc(100% - 28px),
+            calc(100% - 28px) 100%,
+            0 100%
+        );
+        gap: var(--g-spacing-4);
+        min-height: 190px;
+        box-sizing: border-box;
+        padding: var(--g-spacing-6);
+    }
+
+    .title {
+        --g-text-display-4-font-size: 32px;
+        --g-text-display-4-line-height: 1.05;
+    }
+
+    .description {
+        max-width: 340px;
+        font-size: var(--g-text-body-2-font-size);
+        line-height: var(--g-text-body-2-line-height);
+    }
+
+    .strings {
+        display: none;
+    }
+
+    .entry {
+        padding: var(--g-spacing-6);
+    }
+}
