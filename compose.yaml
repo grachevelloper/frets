@@ -9,7 +9,7 @@ services:
       LIBRARY_DB_PASSWORD: ${LIBRARY_DB_PASSWORD:?Set LIBRARY_DB_PASSWORD}
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./deploy/postgres/01-roles.sh:/docker-entrypoint-initdb.d/01-roles.sh:ro
+      - ./deploy/postgres/init-roles.sh:/docker-entrypoint-initdb.d/01-roles.sh:ro
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -h 127.0.0.1 -U postgres -d frets']
       interval: 2s
@@ -23,6 +23,7 @@ services:
       args:
         SERVICE: auth
     restart: unless-stopped
+    stop_grace_period: 15s
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,6 +44,7 @@ services:
       args:
         SERVICE: song-library
     restart: unless-stopped
+    stop_grace_period: 15s
     depends_on:
       postgres:
         condition: service_healthy
