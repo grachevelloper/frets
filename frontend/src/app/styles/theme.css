@@ -1,0 +1,18 @@
+.g-root_theme_light {
+  --g-color-base-background: #f5ead8;
+  --g-color-text-primary: #382019;
+  --g-color-text-secondary: #745c4d;
+  --g-color-base-brand: #a73529;
+  --g-color-base-brand-hover: #8d2a20;
+  --g-color-base-selection: rgba(167, 53, 41, 0.08);
+  --g-color-base-selection-hover: rgba(167, 53, 41, 0.15);
+  --g-color-line-brand: #a73529;
+  --g-color-line-focus: #a73529;
+  --g-color-text-brand: #a73529;
+  --g-color-text-brand-heavy: #8d2a20;
+  --g-color-text-brand-contrast: #fff8ec;
+  --g-color-text-link: #a73529;
+  --g-color-text-link-hover: #8d2a20;
+  --g-color-text-link-visited: #a73529;
+  --g-color-text-link-visited-hover: #8d2a20;
+}

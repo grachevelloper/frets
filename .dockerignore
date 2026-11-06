@@ -2,3 +2,6 @@
 .env
 .env.*
 web
+
+**/node_modules
+**/dist
