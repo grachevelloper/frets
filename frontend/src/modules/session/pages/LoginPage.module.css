@@ -1,0 +1,28 @@
+.heading {
+    --g-text-display-1-font-size: 32px;
+    --g-text-display-1-line-height: 1.15;
+    margin: 0;
+}
+
+.copy {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.hint {
+    margin: 0;
+    padding-top: var(--g-spacing-5);
+    border-top: 1px solid var(--g-color-line-generic);
+}
+
+@media (max-width: 979px) {
+    .heading {
+        display: none;
+    }
+
+    .copy {
+        font-size: var(--g-text-body-2-font-size);
+        line-height: var(--g-text-body-2-line-height);
+    }
+}

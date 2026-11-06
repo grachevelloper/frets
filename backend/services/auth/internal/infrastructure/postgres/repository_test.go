@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/grachevelloper/frets/backend/services/auth/internal/domain/auth"
@@ -36,7 +37,7 @@ func TestIdentityAndSessionPersistence(t *testing.T) {
 	identity := auth.Identity{
 		ID:    uuid.NewString(),
 		Name:  "Guitarist",
-		Email: &email,
+		Email: email,
 	}
 	t.Cleanup(func() {
 		if _, err := repo.db.Exec(context.Background(), "DELETE FROM auth.sessions WHERE user_id IN (SELECT id FROM auth.users WHERE email=$1)", email); err != nil {
@@ -101,6 +102,15 @@ func TestIdentityAndSessionPersistence(t *testing.T) {
 	if err := repo.db.QueryRow(ctx, "SELECT count(*) FROM auth.users WHERE email=$1", email).Scan(&users); err != nil || users != 1 {
 		t.Fatalf("profiles after concurrent first login=%d err=%v", users, err)
 	}
+	identity.Email = "updated-" + email
+	updated := create("google", expires)
+	updatedProfile := profile(updated)
+	identity.Email = email
+	create("google", expires)
+	if updatedProfile.ID != userID || updatedProfile.Email != "updated-"+email {
+		t.Fatalf("email refresh changed identity or lost email: %+v", updatedProfile)
+	}
+
 	first := create("google", expires)
 	second := create("google", expires)
 	other := create("yandex", expires)
@@ -144,5 +154,16 @@ func TestAttemptCanOnlyBeConsumedOnce(t *testing.T) {
 	}
 	if _, err := repo.ConsumeAttempt(ctx, a.StateHash, a.BrowserHash, a.Provider); !errors.Is(err, auth.ErrLoginInvalid) {
 		t.Fatalf("replayed attempt: %v", err)
+	}
+}
+
+func TestNewProfilesRequireEmail(t *testing.T) {
+	repo := testRepository(t)
+
+	_, err := repo.db.Exec(t.Context(), "INSERT INTO auth.users(nickname) VALUES('missing-email')")
+
+	var databaseError *pgconn.PgError
+	if !errors.As(err, &databaseError) || databaseError.ConstraintName != "users_email_required" {
+		t.Fatalf("expected required email constraint, got %v", err)
 	}
 }

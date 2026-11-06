@@ -68,14 +68,14 @@ func (p Provider) Identity(ctx context.Context, code, verifier string) (auth.Ide
 		return auth.Identity{}, fmt.Errorf("userinfo returned %d", response.StatusCode)
 	}
 	var data struct {
-		Sub          string  `json:"sub"`
-		ID           string  `json:"id"`
-		Name         string  `json:"name"`
-		Login        string  `json:"login"`
-		DisplayName  string  `json:"display_name"`
-		Email        *string `json:"email"`
-		DefaultEmail *string `json:"default_email"`
-		ClientID     string  `json:"client_id"`
+		Sub          string `json:"sub"`
+		ID           string `json:"id"`
+		Name         string `json:"name"`
+		Login        string `json:"login"`
+		DisplayName  string `json:"display_name"`
+		Email        string `json:"email"`
+		DefaultEmail string `json:"default_email"`
+		ClientID     string `json:"client_id"`
 	}
 	if err := json.NewDecoder(response.Body).Decode(&data); err != nil {
 		return auth.Identity{}, fmt.Errorf("decode userinfo: %w", err)
@@ -101,6 +101,9 @@ func (p Provider) Identity(ctx context.Context, code, verifier string) (auth.Ide
 	}
 	if identity.ID == "" {
 		return auth.Identity{}, errors.New("missing provider account ID")
+	}
+	if !auth.ValidEmail(identity.Email) {
+		return auth.Identity{}, errors.New("missing or invalid provider email")
 	}
 	if identity.Name == "" {
 		identity.Name = p.name

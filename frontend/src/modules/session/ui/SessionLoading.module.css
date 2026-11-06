@@ -1,0 +1,9 @@
+.status {
+    min-height: 320px;
+}
+
+@media (max-width: 979px) {
+    .status {
+        min-height: 240px;
+    }
+}

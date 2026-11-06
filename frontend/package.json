@@ -1,0 +1,53 @@
+{
+    "name": "frets-frontend",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "packageManager": "pnpm@10.17.1",
+    "engines": {
+        "node": ">=22.12"
+    },
+    "scripts": {
+        "dev": "vite --host 127.0.0.1",
+        "build": "tsc --noEmit && vite build",
+        "typecheck": "tsc --noEmit",
+        "test": "vitest run",
+        "lint": "eslint .",
+        "format:check": "prettier --check ."
+    },
+    "dependencies": {
+        "@gravity-ui/i18n": "^1.8.0",
+        "@gravity-ui/uikit": "^8.0.0",
+        "@tanstack/react-query": "^5.106.1",
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1",
+        "react-router": "^7.18.5"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.5",
+        "@testing-library/jest-dom": "^7.0.1",
+        "@testing-library/react": "^16.3.3",
+        "@testing-library/user-event": "^14.6.8",
+        "@types/node": "^26.6.6",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^6.2.1",
+        "eslint": "^9.39.5",
+        "eslint-import-resolver-typescript": "^4.4.5",
+        "eslint-plugin-i18n-json": "^4.0.1",
+        "eslint-plugin-i18next": "^6.1.5",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-prettier": "^5.5.7",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "eslint-plugin-react-refresh": "^0.5.7",
+        "eslint-plugin-simple-import-sort": "^14.0.0",
+        "globals": "^17.14.0",
+        "jsdom": "^31.0.0",
+        "prettier": "^3.9.10",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.72.1",
+        "vite": "^8.3.6",
+        "vitest": "^5.1.0"
+    }
+}

@@ -21,6 +21,10 @@ func New(repo Repository, tokens TokenGenerator) *UseCase {
 }
 
 func (s *UseCase) Create(ctx context.Context, provider string, identity auth.Identity) (string, error) {
+	if !auth.ValidEmail(identity.Email) {
+		return "", auth.ErrLoginFailed
+	}
+
 	key := s.tokens.Generate()
 	if err := s.repo.CreateSession(ctx, provider, identity, auth.HashSecret(key), time.Now().Add(auth.SessionLifetime)); err != nil {
 		return "", fmt.Errorf("create session: %w", err)
@@ -36,6 +40,10 @@ func (s *UseCase) Profile(ctx context.Context, key string) (auth.Profile, error)
 	if err != nil {
 		return auth.Profile{}, fmt.Errorf("get session profile: %w", err)
 	}
+	if !auth.ValidEmail(profile.Email) {
+		return auth.Profile{}, auth.ErrUnauthorized
+	}
+
 	return profile, nil
 }
 

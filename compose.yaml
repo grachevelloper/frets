@@ -65,14 +65,14 @@ services:
       - files:/data/files
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     depends_on:
       - auth
       - song-library
     ports:
       - '127.0.0.1:6666:8080'
-    volumes:
-      - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   postgres:

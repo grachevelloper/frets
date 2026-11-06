@@ -45,8 +45,9 @@ func (h Handler) Logout(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) LocalLogin(w http.ResponseWriter, r *http.Request) {
 	key, err := h.sessions.Create(r.Context(), "local", auth.Identity{
-		ID:   "local",
-		Name: "Local guitarist",
+		ID:    "local",
+		Name:  "Local guitarist",
+		Email: "local@frets.invalid",
 	})
 	if err != nil {
 		failure(w, err)

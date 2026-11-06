@@ -9,7 +9,7 @@ import (
 type profileDTO struct {
 	ID        string    `json:"id"`
 	Nickname  string    `json:"nickname"`
-	Email     *string   `json:"email"`
+	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"createdAt"`
 }
 

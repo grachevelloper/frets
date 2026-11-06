@@ -3,5 +3,5 @@ package auth
 type Identity struct {
 	ID    string
 	Name  string
-	Email *string
+	Email string
 }

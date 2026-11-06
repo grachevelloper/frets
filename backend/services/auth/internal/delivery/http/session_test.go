@@ -25,6 +25,7 @@ func (s *sessionsStub) Profile(context.Context, string) (auth.Profile, error) {
 	return auth.Profile{
 		ID:       "profile",
 		Nickname: "Guitarist",
+		Email:    "guitarist@example.test",
 	}, nil
 }
 
@@ -44,7 +45,7 @@ func TestProfileContractAndCookieRevocation(t *testing.T) {
 	if err := json.Unmarshal(response.Body.Bytes(), &profile); err != nil {
 		t.Fatal(err)
 	}
-	if response.Code != http.StatusOK || profile["nickname"] == nil || profile["createdAt"] == nil {
+	if response.Code != http.StatusOK || profile["nickname"] == nil || profile["createdAt"] == nil || string(profile["email"]) != `"guitarist@example.test"` {
 		t.Fatalf("status=%d body=%s", response.Code, response.Body.String())
 	}
 	response = httptest.NewRecorder()
